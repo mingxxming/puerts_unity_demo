@@ -38,9 +38,14 @@ namespace PuertsTest
           
             Thread t = new Thread(new ThreadStart(()=> {
                 while (isRunning) {
-                    if (JsUpdate != null)
-                        JsUpdate();
-                    Thread.Sleep(100);
+                    try {
+                        if (JsUpdate != null)
+                            JsUpdate();
+                    }catch(Exception e) {
+                        Debug.LogError(e);
+                    }
+                    
+                    Thread.Sleep(1000);
                 }
             }));
             t.Start();
