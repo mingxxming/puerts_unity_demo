@@ -11,8 +11,9 @@ class Rotate {
     
     onUpdate() {
         //js不支持操作符重载所以Vector3的乘这么用
-        let r = CS.UnityEngine.Vector3.op_Multiply(CS.UnityEngine.Vector3.up, CS.UnityEngine.Time.deltaTime * speed);
-        this.bindTo.transform.Rotate(r);
+        //let r = CS.UnityEngine.Vector3.op_Multiply(CS.UnityEngine.Vector3.up, CS.UnityEngine.Time.deltaTime * speed);
+        //this.bindTo.transform.Rotate(r);
+        console.log("thread call -------------------------");
     }
     
     onDestroy() {

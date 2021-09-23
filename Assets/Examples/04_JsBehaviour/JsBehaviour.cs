@@ -2,6 +2,7 @@
 using Puerts;
 using System;
 using System.Collections;
+using System.Threading;
 
 namespace PuertsTest
 {
@@ -18,11 +19,14 @@ namespace PuertsTest
         public Action JsOnDestroy;
 
         static JsEnv jsEnv;
+        public bool isRunning;
+
 
         void Awake()
         {
+            isRunning = true;
             if (jsEnv == null) jsEnv = new JsEnv(new DefaultLoader(), 9229);
-
+            jsEnv.UsingAction<float>();
             var init = jsEnv.Eval<ModuleInit>("const m = require('" + ModuleName + "'); m.init;");
 
             if (init != null) init(this);
@@ -31,16 +35,27 @@ namespace PuertsTest
         void Start()
         {
             if (JsStart != null) JsStart();
+          
+            Thread t = new Thread(new ThreadStart(()=> {
+                while (isRunning) {
+                    if (JsUpdate != null)
+                        JsUpdate();
+                    Thread.Sleep(100);
+                }
+            }));
+            t.Start();
+            t.IsBackground = true;
+            
         }
 
         void Update()
         {
             jsEnv.Tick();
-            if (JsUpdate != null) JsUpdate();
         }
 
         void OnDestroy()
         {
+            isRunning = false;
             if (JsOnDestroy != null) JsOnDestroy();
             JsStart = null;
             JsUpdate = null;
